@@ -6,6 +6,9 @@ import sys
 
 class Table(QTableWidget):
     def __init__(self): # ИНИЦИАЛИЗАЦИЯ КЛАССА
+        """Инициализация класса
+        ps: вот так добавляют коментарии)
+        посмотреть их можно с помощью волшебного метода __doc__ """
         super().__init__()
         self.setWindowTitle("Таблица")
         self.resize(300, 200)
