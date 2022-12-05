@@ -159,6 +159,11 @@ class Window(QWidget):
             self.query.addBindValue(name)
             self.query.exec()
 
+            try:
+                self.table.table_formation()
+            except AttributeError:
+                pass
+
     def mark_button(self):
         names = self.get_name()
         name = self.get_choice(names)
@@ -168,9 +173,19 @@ class Window(QWidget):
             self.update_mark(name, add_mark)
             self.set_average(name)
 
+            try:
+                self.table.table_formation()
+            except AttributeError:
+                pass
+
     def clear_button(self):
         self.query.prepare("DELETE FROM students")
         self.query.exec()
+
+        try:
+            self.table.table_formation()
+        except AttributeError:
+            pass
 
     def db_view(self):
         self.table = Table()
@@ -182,6 +197,11 @@ class Window(QWidget):
             self.query.prepare("DELETE FROM students WHERE name = (?)")
             self.query.addBindValue(name)
             self.query.exec()
+
+            try:
+                self.table.table_formation()
+            except AttributeError:
+                pass
 
 
 if __name__ == "__main__":
