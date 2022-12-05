@@ -1,39 +1,54 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QPushButton, QInputDialog, QLineEdit, QWidget
+from PyQt5.QtWidgets import QApplication, QLabel, QPushButton, QInputDialog, QLineEdit, QWidget,QTableWidget()
 from PyQt5.QtSql import QSqlDatabase, QSqlQuery
 from PyQt5.QtGui import QFont
 import sys
 
 
-# TODO Добавит новый класс в котором:
-    # TODO 1) Добавить заголовок
-    # TODO 2) подключится к базе данных
-    # TODO 3) созлать таблицу используя класс QTableWidget()
-    # TODO 4) создать функцию table_formation в которой будет формироватся таблица
-    # TODO 5) добавить таблицу в центре окна
-    # TODO 6) отоброзить все окна
+class Home(QWidget):
+    def __init__(self):
+        super().__init__(self)
+        self.setWindowTitle("Baseeee это база")
+        self.resize(600, 600)
+        self.db = sqlite3.connect("students.db")
+        self.tabl = QTableWidget(self)
+        self.tabl.move(300, 300)
+        self.show()
 
- # TODO В методе table_formation:
-    # TODO 1) добавить количество колонок в таблицу
-    # TODO 2) добавить название каждой колонки используя метод: setHorizontalHeaderLabels
-    # TODO 3) выболнить SQL запрос для получения всех данных из базы данных
-    # TODO 4) с помощью цикла ваил заполнить все ряды в таблице
-    # TODO 5) изменить размер колонки, в зависимости от контента( аналог sizeHint )
+    def table_formation(self):
+        self.tabl.setColumnCount(3)
+        self.tabl.setHorizontalHeaderLabels(["Номер ученика", "Имя ученика", "Оценка ученика"])
+        sqlite_request = """SELECT * FROM students"""
+        self.cursor.execute(sqlite_request)
+        records = self.cursor.fetchall() #получение строк
+        print("Всего строк:  ", len(records))
+        print("Вывод каждой строки")
+        for row in records:
+            print("Номер:", row[0])
+            print("Имя:", row[1])
+            print("Оценка:", row[2])
+        for i in range(1, len(records)):  # заполнение таблицы
+            if records[i].strip() == '':
+                continue
+            self.setRowCount(self.rowCount() + 1)  # задать количество строк
+            j, p = 0, records[i].split(',')
+            for t in p:
+                self.setItem(i - 1, j, Tbi(t))  # задать поля в строке
+                j += 1
+        self.resizeColumnsToContents()  # ширина столцов подогнать по ширине текста
+        self.show()
 
-class Window(QMainWindow):
-    # TODO изменить наследование окна с QMainWindow на QWidgets
-    # TODO Убрать лишние строки кода, которые остались после изменения наследования
-    class Window(QMainWindow):
-        def __init__(self):
-            super().__init__()
-            self.setWindowTitle("Оценочки")
-            self.resize(400, 400)
-            self.setFont(QFont("Comic Sans MS", 10, QFont.Bold))
-            self.center_str = QLabel("#ШколаВнеПолитики")
-            self.center_str.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-            self.setCentralWidget(self.center_str)
-            self.add_buttons()
-            self.init_ui()
+class Window(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Оценочки")
+        self.resize(400, 400)
+        self.setFont(QFont("Comic Sans MS", 10, QFont.Bold))
+        self.center_str = QLabel("#ШколаВнеПолитики")
+        self.center_str.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        self.setCentralWidget(self.center_str)
+        self.add_buttons()
+        self.init_ui()
 
     def init_ui(self):
         self.db = QSqlDatabase.addDatabase("QSQLITE")
@@ -53,9 +68,14 @@ class Window(QMainWindow):
         student_button.clicked.connect(self.data_button)
 
     # TODO Добавить кнопку для вывода информации из базы данных
+    def print_bd(self):
+        print_bd = QPushButton('Вывести информацию')
+        pass
+
 
     def create_bd(self):
-        #TODO  Перенести соединение с базой данных из init_ui
+        self.db = QSqlDatabase.addDatabase("QSQLITE")
+        self.db.setDatabaseName("students.sqlite")
         if not self.db.open():
             print("Не получилось открыть базу :(")
         self.query = QSqlQuery()
@@ -84,8 +104,9 @@ class Window(QMainWindow):
         add_mark = self.get_grade(name, mark)
         self.update_mark(name, add_mark)
 
-    # TODO Добавить функцию db_view которая будет открывать новое окно с базой данных
 
+    def db_view(self):
+        self.tabl = Table()
 
     def update_mark(self, name, mark):
         self.query.prepare("UPDATE students SET mark = (?) WHERE name = (?)")
