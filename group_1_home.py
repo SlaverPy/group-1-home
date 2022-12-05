@@ -1,7 +1,7 @@
-from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QPushButton, QInputDialog, QLineEdit, QWidget, QTableWidget, QTableWidgetItem
 from PyQt5.QtSql import QSqlDatabase, QSqlQuery
 import sys
+
 
 class Table(QTableWidget):
     def __init__(self): # ИНИЦИАЛИЗАЦИЯ КЛАССА
@@ -30,6 +30,7 @@ class Table(QTableWidget):
         self.table.resizeColumnsToContents()
         self.table.resizeRowsToContents()
         self.table.show()
+
 
 class Window(QWidget):
     def __init__(self): # ИНИЦИАЛИЗАЦИЯ КЛАССА
@@ -158,8 +159,6 @@ class Window(QWidget):
             self.query.addBindValue(name)
             self.query.exec()
 
-            self.table.table_formation()
-
     def mark_button(self):
         names = self.get_name()
         name = self.get_choice(names)
@@ -169,13 +168,9 @@ class Window(QWidget):
             self.update_mark(name, add_mark)
             self.set_average(name)
 
-            self.table.table_formation()
-    
     def clear_button(self):
         self.query.prepare("DELETE FROM students")
         self.query.exec()
-
-        self.table.table_formation()
 
     def db_view(self):
         self.table = Table()
@@ -188,7 +183,6 @@ class Window(QWidget):
             self.query.addBindValue(name)
             self.query.exec()
 
-            self.table.table_formation()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
